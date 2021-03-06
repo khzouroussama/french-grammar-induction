@@ -181,14 +181,30 @@ grammar_str = importCFG('backend/models/french_CFG.txt')
 grammar = CFG.fromstring(grammar_str.split('\n'))
 # print(grammar.productions())
 
-rd_parser = nltk.RecursiveDescentParser(grammar)
+# rd_parser = nltk.RecursiveDescentParser(grammar)
 
 print(tagged_sent)
 # print(grammar)
 
 # print parsing
 # parsing kinda working , SLOOWWW :'( THERDET
-for tree in rd_parser.parse(tagged_sent):
-    print(tree)
+
+def parse(sent):
+    #Returns nltk.Tree.Tree format output
+    a = []  
+    parser = nltk.ChartParser(grammar)
+    for tree in parser.parse(sent):
+        a.append(tree)
+    return(a[0]) 
+
+#Gives output as structured tree   
+print(parse(tagged_sent))
+
+#Gives tree diagrem in tkinter window
+parse(tagged_sent).draw()
+
+# for tree in rd_parser.parse(tagged_sent):
+#     t = Tree.fromstring(str(tree))
+#     t.draw() 
 
   
