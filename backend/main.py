@@ -65,6 +65,7 @@ def importCFG(filename):
 def saveCFG(filename , CFG):
     with open(filename , 'w' , encoding="utf8") as f:
         f.write(CFG)
+
 ##########################################
 #  IMPLEMENTING SELAB_GUESSOUM THE ALGORITHM
 ##########################################
@@ -75,17 +76,7 @@ def NGramExtraction(pos_tagged) :
         for i in range(2 , len(sent) + 1) :
             ngrams.extend(nltk.ngrams(map(lambda x : x[1] ,sent),i))
     return ngrams
-
-def getMaxFromFreqDist(freq):
-    for elm in sorted(freq.items(), key=itemgetter(1), reverse=True) :
-        # print(elm)
-        if len(elm[0]) == 1 :
-            if not elm[0][0].startswith('#R') :
-                return elm[0]
-        else :
-            return elm[0]
    
-
 def substitution(pos_tagged , R , non_terminal) :
     result = []
     for sen in pos_tagged : 
@@ -94,7 +85,6 @@ def substitution(pos_tagged , R , non_terminal) :
                 sen = sen[:i]+[(non_terminal,non_terminal)]+sen[i + len(R):]
         result.append(sen)
     return result
-
 
 def printProgress(maxProgress , pos_tagged , R) :
     max=50
@@ -113,8 +103,7 @@ def printGrammar(R):
         print('#R'+str(idx) ,'->' ,' '.join( val))
 
 def FormatGrammarAsCFG(R):
-
-    return '\n'.join([
+    return 'S -> '+ ' | '.join(['R'+str(i) for i in range(len(R))])+'\n' + '\n'.join([
         'R'+str(idx) +' -> '+' '.join([r.replace('#','') if r.startswith('#') else '"'+r+'"' for r in val])
         for (idx,val) in enumerate(R)
     ])
@@ -164,18 +153,17 @@ sent_detector = nltk.data.load('tokenizers/punkt/french.pickle')
 # print(getPOSSentencesFromText(text, unigram_tagger,sent_detector.sentences_from_tokens, moses.tokenize))
 
 
-# pos_tagged = loadCorpus(path2pos_corpus)
+pos_tagged = loadCorpus(path2pos_corpus)
 
-
-# saveCFG('backend/models/french_CFG.txt',FormatGrammarAsCFG(InductGrammar(pos_tagged)))
-importCFG('backend/models/french_CFG.txt')
+saveCFG('backend/models/french_CFG.txt',FormatGrammarAsCFG(InductGrammar(pos_tagged)))
+# importCFG('backend/models/french_CFG.txt')
 # print(getAllTags(pos_tagged))
 
 # freq = nltk.FreqDist(NGramExtraction(pos_tagged))
 # print(sorted(freq.items(), key=itemgetter(1), reverse=True)[:10])
 
 
-sent = """À la suite de la parution le matin même d'un article 2=le concernant dans le quotidien Libération."""
+sent = """À la suite de"""
 moses = MosesTokenizer(lang='fr')
 # # train tagger 
 # unigram_tagger  = trainTagger(pos_tagged)
@@ -190,12 +178,17 @@ tagged_sent = [token[1] for token in unigram_tagger.tag(moses.tokenize(sent ,esc
 
 grammar_str = importCFG('backend/models/french_CFG.txt')
 
-grammar = CFG.fromstring(grammar_str)
+grammar = CFG.fromstring(grammar_str.split('\n'))
 # print(grammar.productions())
 
 rd_parser = nltk.RecursiveDescentParser(grammar)
 
 print(tagged_sent)
-# print(rd_parser)
-print(list(rd_parser.parse(tagged_sent)))
+# print(grammar)
+
+# print parsing
+# parsing kinda working , SLOOWWW :'( THERDET
+for tree in rd_parser.parse(tagged_sent):
+    print(tree)
+
   
