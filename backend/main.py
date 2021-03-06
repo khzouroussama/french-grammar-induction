@@ -92,7 +92,7 @@ def printProgress(maxProgress , pos_tagged , R) :
     min = max - int(((maxProgress - len(pos_tagged) +1 ) / maxProgress ) * max)
     prog = int(((prog - min)/(max - min))*50)
     system('clear')
-    print('Building Grammar :', prog)
+    print('Building Grammar :')
     print('\nCurrent rule : \n\t#R'+str(len(R)-1) ,'->' ,' '.join(R[len(R)-1]))
     print('\n[{}] {}%'.format('='*(prog)+' '*(max-prog) , int(((prog) / max)*100)) )
 
