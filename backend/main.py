@@ -30,17 +30,92 @@ def getPOSSentencesFromText(text, tagger, sent_tokenizer, tokenizer) :
     return [tagger.tag(sentence) for sentence in sent_tokenizer(tokenizer(text ,escape=False))]
 
 
-def SaveTrainedTagger(outputFile,tagger) :
+def saveTagger(outputFile,tagger) :
     output = open(outputFile, 'wb')
     dump(tagger, output, -1)
     output.close()
 
-def loadTrainedTagger(inputfile) :
+def importTagger(inputfile) :
     input = open(inputfile, 'rb')
     tagger = load(input)
     input.close()
     return tagger
 
+
+def trainTagger(pos_tagged , tagger_type):
+    size = int(len(pos_tagged) * 0.9)
+    train_sents = pos_tagged[:size]
+    test_sents = pos_tagged[size:]
+
+    tagger = nltk.UnigramTagger(train=pos_tagged , verbose=True)
+
+    print('(train={} , test={} , evaluate={})'.format(size ,len(pos_tagged) ,tagger.evaluate(test_sents)))
+
+    return tagger
+    
+
+
+##########################################
+#  IMPLEMENTING SELAB_GUESSOUM THE ALGORITHM
+##########################################
+
+def NGramExtraction(pos_tagged) : 
+    ngrams = []
+    for sent in pos_tagged :
+        for i in range(2 , len(sent) + 1) :
+            ngrams.extend(nltk.ngrams(map(lambda x : x[1] ,sent),i))
+    return ngrams
+
+def getMaxFromFreqDist(freq):
+    for elm in sorted(freq.items(), key=itemgetter(1), reverse=True) :
+        # print(elm)
+        if len(elm[0]) == 1 :
+            if not elm[0][0].startswith('#R') :
+                return elm[0]
+        else :
+            return elm[0]
+   
+
+def substitution(pos_tagged , R , non_terminal) :
+    result = []
+    for sen in pos_tagged : 
+        for i in range(len(sen) - len(R)+1) :
+            if tuple(map(lambda x:x[1],sen[i:i + len(R)])) == R :
+                sen = sen[:i]+[(non_terminal,non_terminal)]+sen[i + len(R):]
+        result.append(sen)
+    return result
+
+
+def printProgress(maxProgress , pos_tagged , R) :
+    max=50
+    prog = max - int(((sum(len(s) for s in pos_tagged) - len(pos_tagged) +1 ) / maxProgress ) * max)
+    min = max - int(((maxProgress - len(pos_tagged) +1 ) / maxProgress ) * max)
+    prog = int(((prog - min)/(max - min))*50)
+    system('clear')
+    print('Building Grammar :', prog)
+    print('\nCurrent rule : \n\t#R'+str(len(R)-1) ,'->' ,' '.join(R[len(R)-1]))
+    print('\n[{}] {}%'.format('='*(prog)+' '*(max-prog) , int(((prog) / max)*100)) )
+
+def printGrammar(R):
+    print('Grammar :')
+    for (idx ,val) in enumerate(R) :
+        print('#R'+str(idx) ,'->' ,' '.join( val))
+
+def getAllTags(pos_tagged):
+    return set([word[1] for sent in pos_tagged for word in sent ])
+
+
+def InductGrammar(pos_tagged) :
+    i = 0
+    R = []
+    maxProgress = sum(len(s) for s in pos_tagged)
+    while sum(len(s) for s in pos_tagged) != len(pos_tagged) : 
+        freq = nltk.FreqDist(NGramExtraction(pos_tagged))
+        R.append(freq.max())
+        printProgress(maxProgress , pos_tagged , R ) 
+        pos_tagged = substitution(pos_tagged, freq.max(), '#R'+str(i))
+        i += 1
+    return R
 
 
 text = """Il faut vraiment clarifier cette affaire et faire connaître ce règlement si particulier qui n'a pas cours ailleurs, peut-être le faire interdire par Bruxelles dont les Canaries bénéficient grandement pour ses infrastructures.
@@ -64,87 +139,31 @@ Jean Charest sera basé à Montréal et travaillera avec les clients internation
 
 
 # 
-path2pos_corpus = 'backend/data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok.stanford-pos'
+# path2pos_corpus = 'backend/data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok.stanford-pos'
 # path2pos_corpus = 'backend/data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok copy.stanford-pos'
+path2pos_corpus = 'backend/data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok copy 2.stanford-pos'
 
 sent_detector = nltk.data.load('tokenizers/punkt/french.pickle') 
 
-# TRAIN 
-################################
-# posTaggedCorpus = loadCorpus(path2pos_corpus, sent_tokenizer=sent_detector.sentences_from_tokens ) 
-# size = int(len(posTaggedCorpus) * 0.9)
-# train_sents = posTaggedCorpus[:size]
-# test_sents = posTaggedCorpus[size:]
-# unigram_tagger = nltk.UnigramTagger(train=posTaggedCorpus , verbose=True)
-# print('(train={} , test={} , evaluate={})'.format(size ,len(posTaggedCorpus) ,unigram_tagger.evaluate(test_sents)))
-# SaveTrainedTagger('backend/models/unigram_tagger.pkl', unigram_tagger)
-# LOAD 
-################################
-# unigram_tagger = loadTrainedTagger('backend/models/unigram_tagger.pkl')
+
+
+# # train tagger 
+# uniggram_tagger  = trainTagger(pos_tagged)
+# # save tagger
+# saveTagger(outputFile, tagger)('backend/models/unigram_tagger.pkl', unigram_tagger)
+# # import tagger
+# unigram_tagger = importTagger('backend/models/unigram_tagger.pkl')
 
 
 # moses = MosesTokenizer(lang='fr')
 # print(getPOSSentencesFromText(text, unigram_tagger,sent_detector.sentences_from_tokens, moses.tokenize))
 
 
-
-##########################################
-#  IMPLEMENTING SELAB_GUESSOUM THE ALGORITHM
-##########################################
 pos_tagged = loadCorpus(path2pos_corpus)
 
-def NGramExtraction(pos_tagged) : 
-    ngrams = []
-    for sent in pos_tagged :
-        for i in range(len(sent)) :
-            ngrams.extend(nltk.ngrams(map(lambda x : x[1] ,sent),i+1))
-    return ngrams
 
-def getMaxFromFreqDist(freq):
-    for elm in sorted(freq.items(), key=itemgetter(1), reverse=True) :
-        # print(elm)
-        if len(elm[0]) == 1 :
-            if not elm[0][0].startswith('#R') :
-                return elm[0]
-        else :
-            return elm[0]
-    # return freq.max()
-
-def Substitution(pos_tagged , R , non_terminal ) :
-    result = []
-    for sen in pos_tagged : 
-        new_sen = sen
-        for i in range(len(sen) - len(R)+1) :
-            if list(map(lambda x:x[1],sen[i:i + len(R)])) == list(R) :
-                new_sen = new_sen[:i]+[(non_terminal,non_terminal)]+new_sen[i + len(R):]
-        result.append(new_sen)
-
-    return result
-
-# print(tuple(word[1] for word in pos_tagged[0] ) )
-# print(  pos_tagged[0])
-# print(len(pos_tagged))
+printGrammar(InductGrammar(pos_tagged))
+# print(getAllTags(pos_tagged))
 
 # freq = nltk.FreqDist(NGramExtraction(pos_tagged))
-
-# print(sorted(freq.items(), key=itemgetter(1), reverse=True)[:40])
-
-loop_max = 50
-R = []
-# START ALGORITHM 
-for i in range(loop_max) : #FIXME 
-    system('clear')
-    print('Building Grammar : \n[{}] {}%'.format('='*(i+1)+' '*(loop_max-i-1) , int(((i+1) / loop_max)*100)) )
-    freq = nltk.FreqDist(NGramExtraction(pos_tagged))
-    maxFreq = getMaxFromFreqDist(freq)
-    R.append(maxFreq)
-    # print(maxFreq)
-    pos_tagged = Substitution(pos_tagged, maxFreq, '#R'+str(i))
-
-
-
-
-# print(pos_tagged[0])
-print('Grammar : \n')
-for (idx ,val) in enumerate(R) :
-    print('R'+str(idx) ,'->' ,' '.join( val))
+# print(sorted(freq.items(), key=itemgetter(1), reverse=True)[:10])
