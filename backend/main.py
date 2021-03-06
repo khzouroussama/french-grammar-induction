@@ -5,6 +5,7 @@ from sacremoses import MosesTokenizer
 from pickle import dump ,load
 from operator import itemgetter
 from os import system, name 
+from nltk import CFG
 
 def loadCorpus(file, delimetre='_') :
     pos_corpus : list  = []
@@ -42,19 +43,28 @@ def importTagger(inputfile) :
     return tagger
 
 
-def trainTagger(pos_tagged , tagger_type):
+def trainTagger(pos_tagged):
     size = int(len(pos_tagged) * 0.9)
     train_sents = pos_tagged[:size]
     test_sents = pos_tagged[size:]
 
-    tagger = nltk.UnigramTagger(train=pos_tagged , verbose=True)
+    tagger = nltk.UnigramTagger(train=pos_tagged , verbose=True ,backoff=nltk.DefaultTagger('None') )
 
-    print('(train={} , test={} , evaluate={})'.format(size ,len(pos_tagged) ,tagger.evaluate(test_sents)))
+    print('(train={} , test={} , evaluate={})'.format(size ,len(pos_tagged)-size ,tagger.evaluate(test_sents)))
 
     return tagger
     
+def getAllTags(pos_tagged):
+    return set([word[1] for sent in pos_tagged for word in sent ])
 
 
+def importCFG(filename):
+    with open(filename , 'r' , encoding="utf8") as f:
+        return f.read()
+
+def saveCFG(filename , CFG):
+    with open(filename , 'w' , encoding="utf8") as f:
+        f.write(CFG)
 ##########################################
 #  IMPLEMENTING SELAB_GUESSOUM THE ALGORITHM
 ##########################################
@@ -88,8 +98,9 @@ def substitution(pos_tagged , R , non_terminal) :
 
 def printProgress(maxProgress , pos_tagged , R) :
     max=50
-    prog = max - int(((sum(len(s) for s in pos_tagged) - len(pos_tagged) +1 ) / maxProgress ) * max)
-    min = max - int(((maxProgress - len(pos_tagged) +1 ) / maxProgress ) * max)
+    prog = max - int(((sum(len(s) for s in pos_tagged) - len(pos_tagged) + 1) / maxProgress) * max)
+    min = max - int(((maxProgress - len(pos_tagged) + 1) / maxProgress ) * max)
+    # normelize PROGRESS
     prog = int(((prog - min)/(max - min))*50)
     system('clear')
     print('Building Grammar :')
@@ -97,13 +108,16 @@ def printProgress(maxProgress , pos_tagged , R) :
     print('\n[{}] {}%'.format('='*(prog)+' '*(max-prog) , int(((prog) / max)*100)) )
 
 def printGrammar(R):
-    print('Grammar :')
+    print('Grammar :' , type(R))
     for (idx ,val) in enumerate(R) :
         print('#R'+str(idx) ,'->' ,' '.join( val))
 
-def getAllTags(pos_tagged):
-    return set([word[1] for sent in pos_tagged for word in sent ])
+def FormatGrammarAsCFG(R):
 
+    return '\n'.join([
+        'R'+str(idx) +' -> '+' '.join([r.replace('#','') if r.startswith('#') else '"'+r+'"' for r in val])
+        for (idx,val) in enumerate(R)
+    ])
 
 def InductGrammar(pos_tagged) :
     i = 0
@@ -140,30 +154,48 @@ Jean Charest sera basé à Montréal et travaillera avec les clients internation
 
 # 
 # path2pos_corpus = 'backend/data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok.stanford-pos'
-# path2pos_corpus = 'backend/data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok copy.stanford-pos'
-path2pos_corpus = 'backend/data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok copy 2.stanford-pos'
+path2pos_corpus = 'backend/data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok copy.stanford-pos'
+# path2pos_corpus = 'backend/data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok copy 2.stanford-pos'
 
 sent_detector = nltk.data.load('tokenizers/punkt/french.pickle') 
-
-
-
-# # train tagger 
-# uniggram_tagger  = trainTagger(pos_tagged)
-# # save tagger
-# saveTagger(outputFile, tagger)('backend/models/unigram_tagger.pkl', unigram_tagger)
-# # import tagger
-# unigram_tagger = importTagger('backend/models/unigram_tagger.pkl')
 
 
 # moses = MosesTokenizer(lang='fr')
 # print(getPOSSentencesFromText(text, unigram_tagger,sent_detector.sentences_from_tokens, moses.tokenize))
 
 
-pos_tagged = loadCorpus(path2pos_corpus)
+# pos_tagged = loadCorpus(path2pos_corpus)
 
 
-printGrammar(InductGrammar(pos_tagged))
+# saveCFG('backend/models/french_CFG.txt',FormatGrammarAsCFG(InductGrammar(pos_tagged)))
+importCFG('backend/models/french_CFG.txt')
 # print(getAllTags(pos_tagged))
 
 # freq = nltk.FreqDist(NGramExtraction(pos_tagged))
 # print(sorted(freq.items(), key=itemgetter(1), reverse=True)[:10])
+
+
+sent = """À la suite de la parution le matin même d'un article 2=le concernant dans le quotidien Libération."""
+moses = MosesTokenizer(lang='fr')
+# # train tagger 
+# unigram_tagger  = trainTagger(pos_tagged)
+# save tagger
+# saveTagger('backend/models/unigram_tagger.pkl', unigram_tagger)
+# import tagger
+unigram_tagger = importTagger('backend/models/unigram_tagger.pkl')
+
+# print(unigram_tagger.tag(moses.tokenize(sent)))
+
+tagged_sent = [token[1] for token in unigram_tagger.tag(moses.tokenize(sent ,escape=False))]
+
+grammar_str = importCFG('backend/models/french_CFG.txt')
+
+grammar = CFG.fromstring(grammar_str)
+# print(grammar.productions())
+
+rd_parser = nltk.RecursiveDescentParser(grammar)
+
+print(tagged_sent)
+# print(rd_parser)
+print(list(rd_parser.parse(tagged_sent)))
+  
