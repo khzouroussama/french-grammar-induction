@@ -37,5 +37,18 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "babelMacros": {
+    "twin": {
+      "preset": "styled-components",
+      "styled": {
+        "import": "default",
+        "from": "styled-components"
+      },
+      "css": {
+        "import": "css",
+        "from": "styled-components"
+      }
+    }
   }
 }

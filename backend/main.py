@@ -145,7 +145,7 @@ Jean Charest sera basé à Montréal et travaillera avec les clients internation
 
 # 
 # path2pos_corpus = 'backend/data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok.stanford-pos'
-path2pos_corpus = 'backend/data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok copy.stanford-pos'
+# path2pos_corpus = 'backend/data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok copy.stanford-pos'
 # path2pos_corpus = 'backend/data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok copy 2.stanford-pos'
 
 sent_detector = nltk.data.load('tokenizers/punkt/french.pickle') 
@@ -155,7 +155,7 @@ sent_detector = nltk.data.load('tokenizers/punkt/french.pickle')
 # print(getPOSSentencesFromText(text, unigram_tagger,sent_detector.sentences_from_tokens, moses.tokenize))
 
 
-pos_tagged = loadCorpus(path2pos_corpus)
+# pos_tagged = loadCorpus(path2pos_corpus)
 
 # saveCFG('backend/models/french_CFG.txt',FormatGrammarAsCFG(InductGrammar(pos_tagged)))
 # importCFG('backend/models/french_CFG.txt')
@@ -175,7 +175,7 @@ unigram_tagger = importTagger('backend/models/unigram_tagger.pkl')
 
 # print(unigram_tagger.tag(moses.tokenize(sent)))
 
-sent = u"Il faut vraiment clarifier cette affaire et faire connaître ce règlement si particulier qui n'a pas cours ailleurs"
+sent = u"Il avait participé, à un rang subalterne, à la création de l'aviation israélienne et pris part aux combats aériens durant la guerre de 1948."
 # sent = u""
 # sent = u""
 
