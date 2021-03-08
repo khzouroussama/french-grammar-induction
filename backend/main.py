@@ -104,8 +104,8 @@ def printGrammar(R):
 
 def FormatGrammarAsCFG(R):
     return 'S -> '+ ' | '.join(['R'+str(i) for i in range(len(R))])+'\n' + '\n'.join([
-        'R'+str(idx) +' -> '+' '.join([r.replace('#','') if r.startswith('#') else '"'+r+'"' for r in val])
-        for (idx,val) in enumerate(R)
+        'R'+str(len(R) - idx - 1) +' -> '+' '.join([r.replace('#','') if r.startswith('#') else '"'+r+'"' for r in val])
+        for (idx,val) in enumerate(reversed(R))
     ])
 
 def InductGrammar(pos_tagged) :
@@ -113,9 +113,10 @@ def InductGrammar(pos_tagged) :
     R = []
     maxProgress = sum(len(s) for s in pos_tagged)
     while sum(len(s) for s in pos_tagged) != len(pos_tagged) : 
-        freq = nltk.FreqDist(NGramExtraction(pos_tagged))
+        freq = nltk.FreqDist(sorted(NGramExtraction(pos_tagged), key=len, reverse=True))
+        # if(freq[freq.max()] == 1) : break
         R.append(freq.max())
-        printProgress(maxProgress , pos_tagged , R ) 
+        printProgress(maxProgress, pos_tagged, R) 
         pos_tagged = substitution(pos_tagged, freq.max(), '#R'+str(i))
         i += 1
     return R
@@ -163,7 +164,7 @@ saveCFG('backend/models/french_CFG.txt',FormatGrammarAsCFG(InductGrammar(pos_tag
 # print(sorted(freq.items(), key=itemgetter(1), reverse=True)[:10])
 
 
-sent = """À la suite de"""
+sent = """Par sa sincérité, sa simplicité, il savait toucher nos cœurs, dans les rires comme dans les larmes."""
 moses = MosesTokenizer(lang='fr')
 # # train tagger 
 # unigram_tagger  = trainTagger(pos_tagged)
