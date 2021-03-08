@@ -48,8 +48,10 @@ def trainTagger(pos_tagged):
     train_sents = pos_tagged[:size]
     test_sents = pos_tagged[size:]
 
-    tagger = nltk.UnigramTagger(train=pos_tagged , verbose=True ,backoff=nltk.DefaultTagger('None') )
-
+    tagger = nltk.UnigramTagger(train=pos_tagged, verbose=True ,backoff=nltk.DefaultTagger('None') )
+    tagger = nltk.BigramTagger(train=pos_tagged, verbose=True,backoff=tagger)
+    tagger = nltk.NgramTagger(3,train=pos_tagged, verbose=True,backoff=tagger)
+    tagger = nltk.NgramTagger(4,train=pos_tagged, verbose=True,backoff=tagger)
     print('(train={} , test={} , evaluate={})'.format(size ,len(pos_tagged)-size ,tagger.evaluate(test_sents)))
 
     return tagger
@@ -155,8 +157,7 @@ sent_detector = nltk.data.load('tokenizers/punkt/french.pickle')
 
 pos_tagged = loadCorpus(path2pos_corpus)
 
-# print(len(getAllTags(pos_tagged)))
-saveCFG('backend/models/french_CFG.txt',FormatGrammarAsCFG(InductGrammar(pos_tagged)))
+# saveCFG('backend/models/french_CFG.txt',FormatGrammarAsCFG(InductGrammar(pos_tagged)))
 # importCFG('backend/models/french_CFG.txt')
 # print(getAllTags(pos_tagged))
 
@@ -164,7 +165,6 @@ saveCFG('backend/models/french_CFG.txt',FormatGrammarAsCFG(InductGrammar(pos_tag
 # print(sorted(freq.items(), key=itemgetter(1), reverse=True)[:10])
 
 
-sent = """Un site internet"""
 moses = MosesTokenizer(lang='fr')
 # # train tagger 
 # unigram_tagger  = trainTagger(pos_tagged)
@@ -175,7 +175,13 @@ unigram_tagger = importTagger('backend/models/unigram_tagger.pkl')
 
 # print(unigram_tagger.tag(moses.tokenize(sent)))
 
+sent = u"Il faut vraiment clarifier cette affaire et faire connaître ce règlement si particulier qui n'a pas cours ailleurs"
+# sent = u""
+# sent = u""
+
 tagged_sent = [token[1] for token in unigram_tagger.tag(moses.tokenize(sent ,escape=False))]
+
+print(sent,'\n', tagged_sent ,'\n-----------')
 
 grammar_str = importCFG('backend/models/french_CFG.txt')
 
@@ -184,7 +190,7 @@ grammar = CFG.fromstring(grammar_str.split('\n'))
 
 # rd_parser = nltk.RecursiveDescentParser(grammar)
 
-print(tagged_sent)
+# print(tagged_sent)
 # print(grammar)
 
 # print parsing
