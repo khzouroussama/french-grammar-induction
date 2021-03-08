@@ -143,8 +143,8 @@ Jean Charest sera basé à Montréal et travaillera avec les clients internation
 
 # 
 # path2pos_corpus = 'backend/data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok.stanford-pos'
-# path2pos_corpus = 'backend/data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok copy.stanford-pos'
-path2pos_corpus = 'backend/data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok copy 2.stanford-pos'
+path2pos_corpus = 'backend/data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok copy.stanford-pos'
+# path2pos_corpus = 'backend/data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok copy 2.stanford-pos'
 
 sent_detector = nltk.data.load('tokenizers/punkt/french.pickle') 
 
@@ -156,15 +156,15 @@ sent_detector = nltk.data.load('tokenizers/punkt/french.pickle')
 pos_tagged = loadCorpus(path2pos_corpus)
 
 # print(len(getAllTags(pos_tagged)))
-# saveCFG('backend/models/french_CFG.txt',FormatGrammarAsCFG(InductGrammar(pos_tagged)))
-importCFG('backend/models/french_CFG.txt')
+saveCFG('backend/models/french_CFG.txt',FormatGrammarAsCFG(InductGrammar(pos_tagged)))
+# importCFG('backend/models/french_CFG.txt')
 # print(getAllTags(pos_tagged))
 
 # freq = nltk.FreqDist(NGramExtraction(pos_tagged))
 # print(sorted(freq.items(), key=itemgetter(1), reverse=True)[:10])
 
 
-sent = """Par sa sincérité, sa simplicité, il savait toucher nos cœurs, dans les rires comme dans les larmes."""
+sent = """Un site internet"""
 moses = MosesTokenizer(lang='fr')
 # # train tagger 
 # unigram_tagger  = trainTagger(pos_tagged)
