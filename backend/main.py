@@ -114,9 +114,8 @@ def InductGrammar(pos_tagged) :
     maxProgress = sum(len(s) for s in pos_tagged)
     while sum(len(s) for s in pos_tagged) != len(pos_tagged) : 
         freq = nltk.FreqDist(sorted(NGramExtraction(pos_tagged), key=len, reverse=True))
-        # if(freq[freq.max()] == 1) : break
         R.append(freq.max())
-        printProgress(maxProgress, pos_tagged, R) 
+        printProgress(maxProgress, pos_tagged, R)
         pos_tagged = substitution(pos_tagged, freq.max(), '#R'+str(i))
         i += 1
     return R
@@ -144,8 +143,8 @@ Jean Charest sera basé à Montréal et travaillera avec les clients internation
 
 # 
 # path2pos_corpus = 'backend/data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok.stanford-pos'
-path2pos_corpus = 'backend/data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok copy.stanford-pos'
-# path2pos_corpus = 'backend/data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok copy 2.stanford-pos'
+# path2pos_corpus = 'backend/data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok copy.stanford-pos'
+path2pos_corpus = 'backend/data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok copy 2.stanford-pos'
 
 sent_detector = nltk.data.load('tokenizers/punkt/french.pickle') 
 
@@ -156,8 +155,9 @@ sent_detector = nltk.data.load('tokenizers/punkt/french.pickle')
 
 pos_tagged = loadCorpus(path2pos_corpus)
 
-saveCFG('backend/models/french_CFG.txt',FormatGrammarAsCFG(InductGrammar(pos_tagged)))
-# importCFG('backend/models/french_CFG.txt')
+# print(len(getAllTags(pos_tagged)))
+# saveCFG('backend/models/french_CFG.txt',FormatGrammarAsCFG(InductGrammar(pos_tagged)))
+importCFG('backend/models/french_CFG.txt')
 # print(getAllTags(pos_tagged))
 
 # freq = nltk.FreqDist(NGramExtraction(pos_tagged))
