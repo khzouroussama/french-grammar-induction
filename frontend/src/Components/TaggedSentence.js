@@ -10,7 +10,7 @@ const TaggedWord = ({ word, tag }) => (
       <div tw="absolute text-xs bottom-0 right-0 transform translate-y-3/4 translate-x-1/2 bg-yellow-400 text-indigo-500 font-bold  px-2 rounded-2xl w-auto shadow">
         {tag}
       </div>
-      <span tw="text-lg bg-indigo-100 rounded-lg text-gray-600 p-2 shadow border-2 border-yellow-400">
+      <span tw="text-lg bg-indigo-100 rounded-lg text-gray-600 p-2 shadow border-2 border-yellow-500">
         {word}
       </span>
     </div>

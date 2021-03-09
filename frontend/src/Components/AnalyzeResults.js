@@ -17,7 +17,7 @@ export const AnalyzeResults = ({ result }) => {
         Results
       </h1>
       <TaggedSentence tagged_sent={result.tagged} />
-      <ParsedTree parsedTree={result.parsed} />
+      <ParsedTree parsedTree={result.parsed} image={result.image} />
     </Container>
   );
 };
