@@ -17,7 +17,7 @@ ring-2 ring-yellow-700 text-gray-500 resize-none text-center
  hover:shadow-xl h-8 mx-auto w-full lg:w-2/4 outline-none`;
 const Button = tw(
   motion.div
-)`cursor-pointer flex align-middle rounded-3xl px-6 font-bold h-10 m-3 mx-auto bg-gradient-to-br from-indigo-500 to-yellow-400 text-white shadow focus:ring-2 focus:ring-yellow-400`;
+)`cursor-pointer flex align-middle rounded-3xl px-6 font-bold h-10 m-3 mx-auto bg-gradient-to-br from-indigo-600 to-yellow-500 text-white shadow focus:ring-2 focus:ring-yellow-400`;
 
 function App() {
   const [sent, setSent] = useState(
@@ -47,7 +47,7 @@ function App() {
       <Container>
         <MainContent>
           <motion.div layout tw="flex flex-col my-auto w-full">
-            <h1 tw="mx-auto text-4xl font-bold my-4 uppercase text-center text-transparent  bg-clip-text bg-gradient-to-br from-yellow-500 to-indigo-500 ">
+            <h1 tw="mx-auto text-4xl font-bold my-4 uppercase text-center text-transparent  bg-clip-text bg-gradient-to-br from-yellow-500 to-indigo-600 ">
               Analyze text
             </h1>
             <TextInput
