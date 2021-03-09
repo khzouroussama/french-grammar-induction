@@ -9,23 +9,28 @@ let API =
     ? process.env.REACT_APP_PROD_API
     : process.env.REACT_APP_DEV_API;
 
-const Container = tw.div`flex min-h-screen p-4 bg-gradient-to-br from-blue-100 to-gray-200`;
+const Container = tw(
+  motion.div
+)`flex min-h-screen p-2 lg:p-4 bg-gradient-to-br from-blue-100 to-gray-200`;
 const MainContent = tw.div`w-full flex flex-col`;
 const TextInput = tw(
   TextareaAutosize
 )`border py-2 px-4 rounded-3xl border-gray-200
 focus:ring-2 ring-indigo-500 text-gray-500 resize-none text-center
-shadow hover:shadow-lg h-10 mx-auto sm:w-full lg:w-2/4 outline-none`;
+shadow hover:shadow-lg h-10 mx-auto w-full lg:w-2/4 outline-none`;
 const Button = tw(
   motion.button
 )`rounded-3xl w-40 h-10 m-3 mx-auto bg-gradient-to-br from-blue-400 to-indigo-700 text-blue-50 shadow focus:ring-2 focus:ring-blue-400`;
 
 function App() {
-  const [sent, setSent] = useState("");
+  const [sent, setSent] = useState(
+    "Elle a aussi plaidé pour une réforme de la procédure pénale pour qu'elle soit adaptée aux articles de la Déclaration Universelle des Droits de l'Homme, sur les droits des prisonniers à comparaître devant un tribunal indépendant et impartial et à disposer de garanties de procédures et de la présomption d'innocence."
+  );
   const [result, setResult] = useState(undefined);
   const [loading, setLoading] = useState(false);
   const handleAnalyzeText = () => {
     setLoading(true);
+    setResult(undefined);
     fetch(`${API}/analyze?sent=${sent}`)
       .then((response) => response.json())
       .then((data) => {
