@@ -16,8 +16,8 @@ const TextInput = tw(TextareaAutosize)`border p-4 rounded-3xl border-gray-200
 ring-2 ring-yellow-700 text-gray-500 resize-none text-center
  hover:shadow-xl h-8 mx-auto w-full lg:w-2/4 outline-none`;
 const Button = tw(
-  motion.button
-)`rounded-3xl px-6 font-bold  h-10 m-3 mx-auto bg-gradient-to-br from-indigo-500 to-yellow-400 text-white shadow focus:ring-2 focus:ring-yellow-400`;
+  motion.div
+)`cursor-pointer flex align-middle rounded-3xl px-6 font-bold h-10 m-3 mx-auto bg-gradient-to-br from-indigo-500 to-yellow-400 text-white shadow focus:ring-2 focus:ring-yellow-400`;
 
 function App() {
   const [sent, setSent] = useState(
@@ -47,9 +47,9 @@ function App() {
       <Container>
         <MainContent>
           <motion.div layout tw="flex flex-col my-auto w-full">
-            <div tw="text-4xl font-bold my-4 uppercase text-center text-transparent  bg-clip-text bg-gradient-to-br from-yellow-500 to-indigo-500 ">
+            <h1 tw="mx-auto text-4xl font-bold my-4 uppercase text-center text-transparent  bg-clip-text bg-gradient-to-br from-yellow-500 to-indigo-500 ">
               Analyze text
-            </div>
+            </h1>
             <TextInput
               placeholder="Enter a sentence to scan here"
               value={sent}
@@ -67,7 +67,7 @@ function App() {
                 style={{ outline: "none" }}
                 onClick={handleAnalyzeText}
               >
-                Analyze {result && "new"} texte
+                <span tw="my-auto">Analyze {result && "new"} texte</span>
               </Button>
             )}
           </motion.div>
