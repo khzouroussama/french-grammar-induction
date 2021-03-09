@@ -8,7 +8,7 @@ export const ParsedTree = ({ parsedTree }) => {
   return (
     <ResultContainer title="Parsed Tree">
       <div tw="p-4 w-full flex overflow-auto">
-        <pre tw="mx-auto text-blue-900 font-mono  text-xs md:text-base">
+        <pre tw="mx-auto text-indigo-700 font-mono  text-xs md:text-base">
           {parsedTree}
         </pre>
       </div>

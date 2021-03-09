@@ -4,18 +4,18 @@ import { motion } from "framer-motion";
 import { ParsedTree } from "./ParsedTree";
 import { TaggedSentence } from "./TaggedSentence";
 
-const Container = tw(
-  motion.div
-)`sm:m-1 lg:m-2 p-4 rounded-3xl bg-blue-50 flex flex-col shadow`;
+const Container = tw(motion.div)`sm:m-1 lg:m-2 p-4 flex flex-col`;
 
 export const AnalyzeResults = ({ result }) => {
   return (
     <Container
       layout
-      animate={{ y: [-10, 0], opacity: [0, 1] }}
-      transition={{ ease: "easeIn", duration: 0.2 }}
+      animate={{ opacity: [0, 1], y: [100, 0] }}
+      transition={{ duration: 0.2 }}
     >
-      <h1 tw="text-3xl mx-auto text-indigo-500 my-2 uppercase">Results</h1>
+      <h1 tw="bg-clip-text text-transparent bg-gradient-to-r from-yellow-600 to-indigo-400 text-xl mx-auto my-2 uppercase font-extrabold">
+        Results
+      </h1>
       <TaggedSentence tagged_sent={result.tagged} />
       <ParsedTree parsedTree={result.parsed} />
     </Container>
