@@ -1,5 +1,7 @@
 import React from "react";
+// eslint-disable-next-line no-unused-vars
 import tw from "twin.macro";
+
 import { ResultContainer } from "./ResultContainer";
 
 const TaggedWord = ({ word, tag }) => (
