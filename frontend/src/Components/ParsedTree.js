@@ -7,8 +7,10 @@ import { ResultContainer } from "./ResultContainer";
 export const ParsedTree = ({ parsedTree }) => {
   return (
     <ResultContainer title="Parsed Tree">
-      <div tw="w-full flex">
-        <pre tw="my-4 mx-auto text-gray-600 font-bold ">{parsedTree}</pre>
+      <div tw="p-4 w-full flex overflow-auto">
+        <pre tw="mx-auto text-blue-900 font-mono  text-xs md:text-base">
+          {parsedTree}
+        </pre>
       </div>
     </ResultContainer>
   );

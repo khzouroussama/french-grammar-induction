@@ -11,8 +11,9 @@ const Container = tw(
 export const AnalyzeResults = ({ result }) => {
   return (
     <Container
+      layout
       animate={{ y: [-10, 0], opacity: [0, 1] }}
-      transition={{ ease: "easeIn", duration: 0.4 }}
+      transition={{ ease: "easeIn", duration: 0.2 }}
     >
       <h1 tw="text-3xl mx-auto text-indigo-500 my-2 uppercase">Results</h1>
       <TaggedSentence tagged_sent={result.tagged} />
