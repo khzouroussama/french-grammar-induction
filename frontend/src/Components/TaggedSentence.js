@@ -19,7 +19,7 @@ const TaggedWord = ({ word, tag }) => (
 
 export const TaggedSentence = ({ tagged_sent }) => {
   return (
-    <ResultContainer title="POS Tagged sentence">
+    <ResultContainer title="POS Tagging">
       {tagged_sent.map((tagged_word, idx) => (
         <TaggedWord key={idx} word={tagged_word[0]} tag={tagged_word[1]} />
       ))}

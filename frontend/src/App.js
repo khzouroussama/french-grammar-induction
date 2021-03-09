@@ -4,6 +4,11 @@ import TextareaAutosize from "react-autosize-textarea";
 import { motion } from "framer-motion";
 import { AnalyzeResults } from "./Components/AnalyzeResults";
 
+let API =
+  process.env.NODE_ENV === "production"
+    ? process.env.REACT_APP_PROD_API
+    : process.env.REACT_APP_DEV_API;
+
 const Container = tw.div`flex min-h-screen p-4 bg-gradient-to-br from-blue-100 to-gray-200`;
 const MainContent = tw.div`w-full flex flex-col`;
 const TextInput = tw(
@@ -21,7 +26,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const handleAnalyzeText = () => {
     setLoading(true);
-    fetch("http://127.0.0.1:8000/analyze?sent=" + sent)
+    fetch(`${API}/analyze?sent=${sent}`)
       .then((response) => response.json())
       .then((data) => {
         setResult(data);

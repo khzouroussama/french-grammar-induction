@@ -135,9 +135,9 @@ def parse(sent ,grammar):
 
 if __name__ == "__main__" :
     # 
-    # path2pos_corpus = 'data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok.stanford-pos'
-    # path2pos_corpus = 'data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok copy.stanford-pos'
-    # path2pos_corpus = 'data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok copy 2.stanford-pos'
+    # path2pos_corpus = 'backend/data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok.stanford-pos'
+    # path2pos_corpus = 'backend/data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok copy.stanford-pos'
+    # path2pos_corpus = 'backend/data/free-french-treebank-master/130612/frwikinews/txt-tok-pos/frwikinews-20130110-pages-articles.txt.tok copy 2.stanford-pos'
 
     sent_detector = nltk.data.load('tokenizers/punkt/french.pickle') 
 
@@ -148,8 +148,8 @@ if __name__ == "__main__" :
 
     # pos_tagged = loadCorpus(path2pos_corpus)
 
-    # saveCFG('models/french_CFG.txt',FormatGrammarAsCFG(InductGrammar(pos_tagged)))
-    # importCFG('models/french_CFG.txt')
+    # saveCFG('backend/models/french_CFG.txt',FormatGrammarAsCFG(InductGrammar(pos_tagged)))
+    # importCFG('backend/models/french_CFG.txt')
     # print(getAllTags(pos_tagged))
 
     # freq = nltk.FreqDist(NGramExtraction(pos_tagged))
@@ -162,7 +162,7 @@ if __name__ == "__main__" :
     # save tagger
     # saveTagger('models/unigram_tagger.pkl', unigram_tagger)
     # import tagger
-    unigram_tagger = importTagger('models/unigram_tagger.pkl')
+    unigram_tagger = importTagger('backend/models/unigram_tagger.pkl')
 
     # print(unigram_tagger.tag(moses.tokenize(sent)))
 
@@ -172,7 +172,7 @@ if __name__ == "__main__" :
 
     tagged_sent = [token[1] for token in unigram_tagger.tag(moses.tokenize(sent ,escape=False))]
 
-    grammar_str = importCFG('models/french_CFG.txt')
+    grammar_str = importCFG('backend/models/french_CFG.txt')
 
     grammar = CFG.fromstring(grammar_str.split('\n'))
     # print(grammar.productions())

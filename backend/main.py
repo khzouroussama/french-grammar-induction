@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 import nltk
 from sacremoses import MosesTokenizer
-from algo import parse,importCFG,importTagger
+from backend.algo import parse,importCFG,importTagger
 
 app = FastAPI()
 
@@ -24,8 +24,8 @@ def read_root():
 
 @app.get("/analyze")
 def read_item( sent: Optional[str] = None):
-    grammar_str = importCFG('models/french_CFG.txt')
-    tagger = importTagger('models/unigram_tagger.pkl')
+    grammar_str = importCFG('backend/models/french_CFG.txt')
+    tagger = importTagger('backend/models/unigram_tagger.pkl')
     moses = MosesTokenizer(lang='fr')
     grammar = nltk.CFG.fromstring(grammar_str.split('\n'))
 
