@@ -7,7 +7,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 import nltk
-from nltk.draw.tree import TreeView
 from sacremoses import MosesTokenizer
 from backend.algo import parse,importCFG,importTagger
 
@@ -40,6 +39,7 @@ def read_item( sent: Optional[str] = None):
     parsed = []
     image = ''
     try :
+        from nltk.draw.tree import TreeView
         parsed = parse(tags, grammar)
         (x0, y0, w, h) = TreeView(parsed)._cframe.scrollregion()
         ps = TreeView(parsed)._cframe._canvas.postscript(
