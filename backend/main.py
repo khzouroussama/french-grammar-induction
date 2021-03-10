@@ -39,8 +39,8 @@ def read_item( sent: Optional[str] = None):
     parsed = []
     image = ''
     try :
-        from nltk.draw.tree import TreeView
         parsed = parse(tags, grammar)
+        from nltk.draw.tree import TreeView
         (x0, y0, w, h) = TreeView(parsed)._cframe.scrollregion()
         ps = TreeView(parsed)._cframe._canvas.postscript(
             x=x0,
