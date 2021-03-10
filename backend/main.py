@@ -1,4 +1,5 @@
 import os
+import logging
 from PIL import Image
 import io
 import base64
@@ -20,6 +21,19 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+
+from pyvirtualdisplay import Display
+display = Display(visible=0, size=(1400, 900))
+display.start()
+
+# This code creates a virtual display to draw game images on. 
+# If you are running locally, just ignore it
+import os
+if type(os.environ.get("DISPLAY")) is not str or len(os.environ.get("DISPLAY"))==0:
+    os.system('bash xvfb start')
+    os.system('export DISPLAY :1')
 
 @app.get("/")
 def read_root():
@@ -60,7 +74,7 @@ def read_item( sent: Optional[str] = None):
         img.save(image_out, format="png")
         # image_out.seek(0)
         image = base64.b64encode(image_out.getvalue()).decode()
-    except:
-        print("Something else went wrong")
+    except Exception as e: 
+        logging.exception("An exception was thrown!")
 
     return {"sentence": sent, "tagged" : tagged_sent, "parsed": str(parsed) , "image":image}

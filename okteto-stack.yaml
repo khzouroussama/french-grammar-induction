@@ -1,0 +1,12 @@
+name: fastapi-crud
+services:
+  fastapi:
+    public: true
+    image: khzouroussama/fastapi-crud:latest
+    build: .
+    replicas: 1
+    ports:
+      - 8080
+    resources:
+      cpu: 100m
+      memory: 128Mi
