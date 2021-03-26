@@ -25,6 +25,22 @@ def loadCorpus(file, delimetre='_') :
 
     return pos_corpus
 
+def loadCorpusFromStr(text, delimetre='_') :
+    pos_corpus : list  = []
+
+    tokens = []
+    for sent in re.split(r'\$+', text) :
+        proceced_sent = []
+        for word in re.split(r'\s+', sent) :
+            if word != '' :
+                *token , pos = word.split(delimetre)
+                proceced_sent.append(
+                    ('_'.join(token) , pos)
+                )
+        if len(proceced_sent) :
+            pos_corpus.append(proceced_sent) 
+
+    return pos_corpus
 
 def getPOSSentencesFromText(text, tagger, sent_tokenizer, tokenizer) :
     # escape ruins abstraction

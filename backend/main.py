@@ -9,7 +9,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 import nltk
 from sacremoses import MosesTokenizer
-from backend.algo import parse,importCFG,importTagger
+from backend.algo import parse,importCFG,importTagger, FormatGrammarAsCFG, InductGrammar, loadCorpusFromStr
+
+tagger = importTagger('backend/models/unigram_tagger.pkl')
+
+
 
 app = FastAPI()
 
@@ -41,9 +45,8 @@ def read_root():
 
 
 @app.get("/analyze")
-def read_item( sent: Optional[str] = None):
+def analyze_text( sent: Optional[str] = None):
     grammar_str = importCFG('backend/models/french_CFG.txt')
-    tagger = importTagger('backend/models/unigram_tagger.pkl')
     moses = MosesTokenizer(lang='fr')
     grammar = nltk.CFG.fromstring(grammar_str.split('\n'))
 
@@ -78,3 +81,35 @@ def read_item( sent: Optional[str] = None):
         logging.exception("An exception was thrown!")
 
     return {"sentence": sent, "tagged" : tagged_sent, "parsed": str(parsed) , "image":image}
+
+
+
+
+
+@app.get("/generate")
+def generate( corpus: Optional[str] = None , test: Optional[str] = None):
+    moses = MosesTokenizer(lang='fr')
+
+    pos_tagged = loadCorpusFromStr(corpus)
+    grammar_str = FormatGrammarAsCFG(InductGrammar(pos_tagged))
+
+
+
+    grammar = nltk.CFG.fromstring(grammar_str.split('\n'))
+
+    parsed = []
+    valid = []
+    not_valide = []
+
+    for s in test.split('$') : 
+        try :
+            tagged_sent = [token[1] for token in tagger.tag(moses.tokenize(s ,escape=False))]
+            parsed = parse(tagged_sent,grammar)
+            if parsed != None : 
+                valid.append((s,str(parsed)))
+            else: 
+                not_valide.append(s)
+        except :
+            not_valide.append(s)
+
+    return {"grammar" : grammar_str , "test_results" : { "valide" : valid,"not_valide" : not_valide } }
